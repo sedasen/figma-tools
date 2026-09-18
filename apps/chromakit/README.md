@@ -13,7 +13,6 @@ Built with React, TypeScript, Vite, Tailwind CSS, shadcn/ui using the native neu
 - Convert between HEX, RGB, RGBA, HSL, HSB, OKLCH, LCH, and CMYK.
 - Choose the source and target formats independently.
 - Pick a color and adjust opacity.
-- Sample a screen color with the EyeDropper API where supported by the host. Unsupported hosts show an explanation, and sampling preserves the current opacity.
 - Syntax highlighting for CSS, SCSS, Tailwind CSS, JSX, and JSON snippets runs entirely offline.
 - Copy individual converted values or ready-to-use CSS, SCSS, Tailwind v4, React JSX, and JSON snippets.
 - Keyboard-accessible controls, input validation, and copy feedback.

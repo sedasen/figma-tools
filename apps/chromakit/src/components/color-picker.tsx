@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { converter, formatHex, type Color } from "culori";
 import { HsvaColorPicker } from "react-colorful";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowDown01Icon, DropperIcon } from "@hugeicons/core-free-icons";
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@figma-tools/ui/components/button";
 import { Input } from "@figma-tools/ui/components/input";
 import {
@@ -13,10 +13,6 @@ import {
 import { parseColor, srgb } from "@/lib/colors";
 
 const toHsv = converter("hsv");
-
-type EyeDropperConstructor = new () => {
-  open: () => Promise<{ sRGBHex: string }>;
-};
 
 export function ColorPicker({
   color,
@@ -30,35 +26,7 @@ export function ColorPicker({
   // Preserve the selected hue when saturation/value reach gray or black.
   const hsv = toHsv(color.mode === "hsv" ? color : srgb(color));
   const [draft, setDraft] = useState(hex);
-  const [sampling, setSampling] = useState(false);
-  const [samplingError, setSamplingError] = useState("");
   useEffect(() => setDraft(hex), [hex]);
-
-  async function sampleScreen() {
-    const EyeDropper = (
-      window as Window & { EyeDropper?: EyeDropperConstructor }
-    ).EyeDropper;
-    if (!EyeDropper) {
-      setSamplingError(
-        "Screen sampling is not supported in this environment. Use the color area or enter a HEX value.",
-      );
-      return;
-    }
-    setSamplingError("");
-    setSampling(true);
-    try {
-      const result = await new EyeDropper().open();
-      onChange({ ...parseColor(result.sRGBHex, "HEX"), alpha });
-    } catch (error) {
-      if (!(error instanceof DOMException && error.name === "AbortError")) {
-        setSamplingError(
-          "Screen sampling could not start in this environment.",
-        );
-      }
-    } finally {
-      setSampling(false);
-    }
-  }
 
   function updateHex(value: string) {
     setDraft(value);
@@ -97,24 +65,7 @@ export function ColorPicker({
               onChange({ mode: "hsv", h, s: s / 100, v: v / 100, alpha: a })
             }
           />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            className="absolute bottom-0 left-0 h-9 w-8"
-            aria-label="Pick color from screen"
-            title="Pick color from screen"
-            disabled={sampling}
-            onClick={sampleScreen}
-          >
-            <HugeiconsIcon icon={DropperIcon} size={16} aria-hidden="true" />
-          </Button>
         </div>
-        {samplingError && (
-          <p role="status" className="text-xs text-muted-foreground">
-            {samplingError}
-          </p>
-        )}
         <div className="flex items-center gap-2">
           <div className="relative min-w-0 flex-1">
             <span className="pointer-events-none absolute left-2 top-2 text-xs text-muted-foreground">
