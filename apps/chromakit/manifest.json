@@ -1,5 +1,6 @@
 {
   "name": "ChromaKit",
+  "id": "1682698826675525021",
   "api": "1.0.0",
   "main": "dist/plugin.js",
   "ui": "dist/index.html",
