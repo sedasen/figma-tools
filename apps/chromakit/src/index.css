@@ -1,0 +1,95 @@
+@import "@figma-tools/ui/styles/globals.css";
+@source "../../../packages/ui/src";
+
+.transparency-grid {
+  background: repeating-conic-gradient(
+      var(--border) 0% 25%,
+      var(--background) 0% 50%
+    )
+    0 / 8px 8px;
+}
+.color-picker .react-colorful {
+  width: 100%;
+  height: auto;
+  gap: 12px;
+}
+.color-picker .react-colorful__saturation {
+  height: 192px;
+  flex: none;
+  border-radius: 4px;
+  border-bottom: 0;
+}
+.color-picker .react-colorful__hue,
+.color-picker .react-colorful__alpha {
+  height: 12px;
+  flex: none;
+  border-radius: 9999px;
+  margin-left: 40px;
+  width: calc(100% - 40px);
+}
+.color-picker .react-colorful__pointer {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 1px 3px rgb(0 0 0 / 20%);
+}
+
+.syntax-code .token.comment {
+  color: #6a737d;
+}
+.syntax-code .token.property,
+.syntax-code .token.attr-name {
+  color: #0550ae;
+}
+.syntax-code .token.selector,
+.syntax-code .token.tag,
+.syntax-code .token.keyword,
+.syntax-code .token.atrule {
+  color: #8250df;
+}
+.syntax-code .token.string,
+.syntax-code .token.attr-value {
+  color: #0a6c42;
+}
+.syntax-code .token.number,
+.syntax-code .token.boolean,
+.syntax-code .token.function,
+.syntax-code .token.hexcode,
+.syntax-code .token.color {
+  color: #b45309;
+}
+.syntax-code .token.operator,
+.syntax-code .token.punctuation {
+  color: #57606a;
+}
+
+.dark .syntax-code .token.comment {
+  color: #8b949e;
+}
+.dark .syntax-code .token.property,
+.dark .syntax-code .token.attr-name {
+  color: #79c0ff;
+}
+.dark .syntax-code .token.selector,
+.dark .syntax-code .token.tag,
+.dark .syntax-code .token.keyword,
+.dark .syntax-code .token.atrule {
+  color: #d2a8ff;
+}
+.dark .syntax-code .token.string,
+.dark .syntax-code .token.attr-value {
+  color: #a5d6a7;
+}
+.dark .syntax-code .token.number,
+.dark .syntax-code .token.boolean,
+.dark .syntax-code .token.function,
+.dark .syntax-code .token.hexcode,
+.dark .syntax-code .token.color {
+  color: #ffa657;
+}
+.dark .syntax-code .token.operator,
+.dark .syntax-code .token.punctuation {
+  color: #c9d1d9;
+}

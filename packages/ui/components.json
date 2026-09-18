@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "iconLibrary": "hugeicons",
+  "aliases": {
+    "components": "@figma-tools/ui/components",
+    "ui": "@figma-tools/ui/components",
+    "utils": "@figma-tools/ui/lib/utils",
+    "lib": "@figma-tools/ui/lib",
+    "hooks": "@figma-tools/ui/hooks"
+  }
+}
