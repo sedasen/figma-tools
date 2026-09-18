@@ -40,36 +40,40 @@ export function Footer({
       className="mt-auto shrink-0 border-t px-6 py-3"
       aria-label="ChromaKit links and appearance"
     >
-      <div className="flex items-center gap-2">
-        {links.map(({ key, label, icon }) => (
+      <div className="flex items-center justify-between gap-4">
+        <p className="min-w-0 text-xs leading-5 text-muted-foreground">
+          Your colors, in every format.
+        </p>
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {links.map(({ key, label, icon }) => (
+            <Button
+              key={key}
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              disabled={!PUBLIC_LINKS[key]}
+              aria-label={label}
+              title={PUBLIC_LINKS[key] ? label : `${label} — coming soon`}
+              onClick={() => openLink(key)}
+            >
+              <HugeiconsIcon icon={icon} size={16} aria-hidden="true" />
+            </Button>
+          ))}
           <Button
-            key={key}
             type="button"
             variant="outline"
-            size="icon-xs"
-            disabled={!PUBLIC_LINKS[key]}
-            aria-label={label}
-            title={PUBLIC_LINKS[key] ? label : `${label} — coming soon`}
-            onClick={() => openLink(key)}
+            size="icon-sm"
+            aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+            title={dark ? "Switch to light theme" : "Switch to dark theme"}
+            onClick={onToggleTheme}
           >
-            <HugeiconsIcon icon={icon} size={14} aria-hidden="true" />
+            <HugeiconsIcon
+              icon={dark ? Sun03Icon : Moon02Icon}
+              size={16}
+              aria-hidden="true"
+            />
           </Button>
-        ))}
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-xs"
-          className="ml-auto"
-          aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-          title={dark ? "Switch to light theme" : "Switch to dark theme"}
-          onClick={onToggleTheme}
-        >
-          <HugeiconsIcon
-            icon={dark ? Sun03Icon : Moon02Icon}
-            size={14}
-            aria-hidden="true"
-          />
-        </Button>
+        </div>
       </div>
     </footer>
   );

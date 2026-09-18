@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Color } from "culori";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CodeIcon, BrowserIcon } from "@hugeicons/core-free-icons";
@@ -12,7 +12,6 @@ import {
 } from "@figma-tools/ui/components/tabs";
 import { FormatSelect } from "@/components/format-select";
 import { ColorPicker } from "@/components/color-picker";
-import { CopyButton } from "@/components/copy-button";
 import { ConvertedValues } from "@/components/converted-values";
 import { CodeOutput } from "@/components/code-output";
 import { Footer } from "@/components/footer";
@@ -27,13 +26,33 @@ import {
 const INITIAL_COLOR = parseColor("#6366F1", "HEX");
 
 export default function App() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [source, setSource] = useState<ColorFormat>("HEX");
-  const [target, setTarget] = useState<ColorFormat>("OKLCH");
   const [input, setInput] = useState("#6366F1");
   const [color, setColor] = useState<Color>(INITIAL_COLOR);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [dark, setDark] = useState(false);
+  const [activeTab, setActiveTab] = useState("values");
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || window.parent === window) return;
+
+    let previousHeight = 0;
+    const resize = () => {
+      const height = Math.ceil(container.getBoundingClientRect().height);
+      if (height <= 0 || height === previousHeight) return;
+      previousHeight = height;
+      window.parent.postMessage(
+        { pluginMessage: { type: "resize", height } },
+        "*",
+      );
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(container);
+    resize();
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     document.documentElement.style.colorScheme = dark ? "dark" : "light";
@@ -44,7 +63,6 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [status]);
   const validColor = error ? null : color;
-  const output = validColor ? serializeColor(validColor, target) : "";
 
   function updateInput(value: string) {
     setInput(value);
@@ -74,22 +92,25 @@ export default function App() {
     setError("");
   }
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[512px] flex-col bg-background">
+    <div
+      ref={containerRef}
+      className="mx-auto flex w-full max-w-[512px] flex-col bg-background"
+    >
       <h1 className="sr-only">ChromaKit</h1>
       <main className="flex flex-col gap-6 p-6">
         <section aria-label="Color converter" className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="from-color" className="leading-5">
-              From
+            <Label htmlFor="color" className="leading-5">
+              Color
             </Label>
             <div className="flex items-center">
               <FormatSelect
                 value={source}
                 onChange={changeSource}
-                label="From format"
+                label="Color format"
               />
               <Input
-                id="from-color"
+                id="color"
                 value={input}
                 onChange={(event) => updateInput(event.target.value)}
                 spellCheck={false}
@@ -111,38 +132,9 @@ export default function App() {
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="to-color" className="leading-5">
-              To
-            </Label>
-            <div className="flex items-center">
-              <FormatSelect
-                value={target}
-                onChange={setTarget}
-                label="To format"
-              />
-              <div className="relative -ml-px h-8 min-w-0 flex-1">
-                <Input
-                  id="to-color"
-                  value={output}
-                  readOnly
-                  placeholder="—"
-                  aria-label="Converted color"
-                  className="h-full min-w-0 rounded-l-none pl-2 pr-9 text-xs md:text-xs shadow-none focus-visible:ring-0 focus-visible:border-input"
-                />
-                <CopyButton
-                  value={output}
-                  label="converted color"
-                  inline
-                  disabled={!validColor}
-                  onStatus={setStatus}
-                />
-              </div>
-            </div>
-          </div>
         </section>
-        <Tabs defaultValue="values" className="gap-6">
-          <TabsList className="mx-auto group-data-[orientation=horizontal]/tabs:h-[31px]">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-6">
+          <TabsList className="mx-auto gap-2 group-data-[orientation=horizontal]/tabs:h-[31px]">
             <TabsTrigger value="values" className="pl-[3px] pr-2.5">
               <HugeiconsIcon icon={BrowserIcon} size={16} />
               Converted Values
@@ -152,16 +144,24 @@ export default function App() {
               Code
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="values">
-            <ConvertedValues color={validColor} onStatus={setStatus} />
-          </TabsContent>
-          <TabsContent value="code">
-            <CodeOutput
-              color={validColor}
-              target={target}
-              onStatus={setStatus}
-            />
-          </TabsContent>
+          <div className="grid">
+            <TabsContent
+              value="values"
+              forceMount
+              aria-hidden={activeTab !== "values"}
+              inert={activeTab !== "values"}
+              className="[grid-area:1/1] data-[state=inactive]:pointer-events-none data-[state=inactive]:opacity-0"
+            >
+              <ConvertedValues color={validColor} onStatus={setStatus} />
+            </TabsContent>
+            <TabsContent value="code" className="min-w-0 [grid-area:1/1]">
+              <CodeOutput
+                color={validColor}
+                target={source}
+                onStatus={setStatus}
+              />
+            </TabsContent>
+          </div>
         </Tabs>
         {validColor && isOutsideSrgb(validColor) && (
           <p className="text-xs text-muted-foreground">
