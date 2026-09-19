@@ -17,8 +17,8 @@ export const EXAMPLES: Record<ColorFormat, string> = {
   RGBA: "rgba(99, 102, 241, 1)",
   HSL: "hsl(239 84% 67%)",
   HSB: "hsb(239 59% 95%)",
-  OKLCH: "oklch(58.54% 0.204 277.12)",
-  LCH: "lch(49.32% 78.7 291.4)",
+  OKLCH: "oklch(0.5854 0.2041 277.12)",
+  LCH: "lch(49.05 78.02 292.89)",
   CMYK: "cmyk(59% 58% 0% 5%)",
 };
 const rgb = converter("rgb");
@@ -211,7 +211,8 @@ export function serializeColor(color: Color, format: ColorFormat): string {
     case "OKLCH":
     case "LCH": {
       const value = format === "OKLCH" ? oklch(color) : lch(color);
-      return `${format.toLowerCase()}(${round(value.l * (format === "OKLCH" ? 100 : 1), 3)}% ${round(value.c, 5)} ${round(value.h ?? 0, 3)}${suffix})`;
+      const digits = format === "OKLCH" ? 4 : 2;
+      return `${format.toLowerCase()}(${round(value.l, digits)} ${round(value.c, digits)} ${round(value.h ?? 0, 2)}${suffix})`;
     }
     case "CMYK": {
       const max = Math.max(clipped.r, clipped.g, clipped.b);

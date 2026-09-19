@@ -11,6 +11,23 @@ import { CODE_FORMATS, generateCode } from "./code";
 
 const rgb = converter("rgb");
 describe("color conversion", () => {
+  it.each([
+    ["OKLCH", "oklch(0.5854 0.2041 277.12)"],
+    ["LCH", "lch(49.05 78.02 292.89)"],
+  ] as const)(
+    "formats %s with numeric lightness and compact precision",
+    (format, expected) => {
+      const color = parseColor("#6366F1", "HEX");
+      expect(serializeColor(color, format)).toBe(expected);
+      expect(serializeColor({ ...color, alpha: 0.5 }, format)).toBe(
+        expected.replace(")", " / 0.5)"),
+      );
+      expect(generateCode(color, format, "CSS")).toBe(`color: ${expected};`);
+      expect(
+        JSON.parse(generateCode(color, format, "JSON"))[format.toLowerCase()],
+      ).toBe(expected);
+    },
+  );
   it("matches known sRGB red, white and black values", () => {
     const red = parseColor("#ff0000", "HEX");
     expect(serializeColor(red, "RGB")).toBe("rgb(255, 0, 0)");
@@ -68,7 +85,7 @@ describe("color conversion", () => {
   it("retains wide-gamut sources and clips only sRGB destinations", () => {
     const wide = parseColor("oklch(70% 0.4 30)", "OKLCH");
     expect(isOutsideSrgb(wide)).toBe(true);
-    expect(serializeColor(wide, "OKLCH")).toBe("oklch(70% 0.4 30)");
+    expect(serializeColor(wide, "OKLCH")).toBe("oklch(0.7 0.4 30)");
     expect(serializeColor(wide, "HEX")).toMatch(/^#[0-9A-F]{6}$/);
     expect(wide.mode).toBe("oklch");
   });
