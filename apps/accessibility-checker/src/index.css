@@ -1,0 +1,52 @@
+@import "@figma-tools/ui/styles/globals.css";
+@source "../../../packages/ui/src";
+
+:root {
+  --muted-foreground: oklch(0.46 0 0);
+}
+
+.dark {
+  --muted-foreground: oklch(0.78 0 0);
+}
+
+html {
+  overflow: hidden;
+  background: var(--background);
+}
+
+/* Keep scrolling inside the app. Select's body scroll lock then has no
+   viewport scrollbar to compensate with an extra margin. */
+.plugin-scroll {
+  height: 100dvh;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  background: var(--background);
+}
+
+body {
+  min-width: 320px;
+}
+.result-pass {
+  color: #167047;
+  background: #edf9f1;
+}
+.result-fail {
+  color: #b42318;
+  background: #fff1f0;
+}
+.result-review {
+  color: #885b0b;
+  background: #fff8e6;
+}
+.dark .result-pass {
+  color: #8fe0b4;
+  background: #163528;
+}
+.dark .result-fail {
+  color: #ffb4ab;
+  background: #421f20;
+}
+.dark .result-review {
+  color: #f4d38b;
+  background: #382e19;
+}
